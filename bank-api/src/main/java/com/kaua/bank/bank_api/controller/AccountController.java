@@ -19,7 +19,7 @@ public class AccountController {
     private AccountService service;
 
     @GetMapping
-    public ResponseEntity<List<Account>> listAccount() {
+    public ResponseEntity<List<Account>> listAccounts() {
         try {
             return new ResponseEntity<>(service.findAll(), HttpStatus.OK);
         } catch (Exception e) {
@@ -40,7 +40,7 @@ public class AccountController {
     @PostMapping("/{id}/depositary")
     public ResponseEntity<Void> depositary(@PathVariable Long id, @RequestBody DepositaryAndWithdrawRequest depositaryRequest) {
         try {
-            service.depositar(id, depositaryRequest.getValue());
+            service.depositary(id, depositaryRequest.getValue());
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -50,7 +50,7 @@ public class AccountController {
     @PostMapping("/{id}/withdraw")
     public ResponseEntity<Void> withdraw(@PathVariable Long id, @RequestBody DepositaryAndWithdrawRequest withdrawRequest) {
         try {
-            service.sacar(id, withdrawRequest.getValue());
+            service.withdraw(id, withdrawRequest.getValue());
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -60,7 +60,7 @@ public class AccountController {
     @PostMapping("/transfer")
     public ResponseEntity<Void> transfer(@RequestBody TransferRequest data) {
         try {
-            service.transferir(data.getIdOrigem(), data.getIdDestino(), data.getValue());
+            service.transfer(data.getOriginId(), data.getDestinationId(), data.getValue());
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

@@ -36,7 +36,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void depositar(Long id, double value) throws Exception {
+    public void depositary(Long id, double value) throws Exception {
         Account account = repository.findById(id).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
         if(value > 0) {
             account.setBalance(account.getBalance() + value);
@@ -47,7 +47,7 @@ public class AccountService {
     }
 
     @Transactional
-    public double sacar(Long id, double value) throws Exception {
+    public double withdraw(Long id, double value) throws Exception {
         Account account = repository.findById(id).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
         if(value > 0 && value <= account.getBalance()) {
             account.setBalance(account.getBalance() - value);
@@ -60,12 +60,12 @@ public class AccountService {
     }
 
     @Transactional
-    public void transferir(Long idOrigem, Long idDestino, double value) throws Exception {
-        Account account1 = repository.findById(idOrigem).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
-        Account account2 = repository.findById(idDestino).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
-        if(!idOrigem.equals(idDestino)) {
-            double valueAccount1 = this.sacar(idOrigem, value);
-            this.depositar(idDestino, valueAccount1);
+    public void transfer(Long originId, Long destinationId, double value) throws Exception {
+        Account account1 = repository.findById(originId).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+        Account account2 = repository.findById(destinationId).orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+        if(!originId.equals(destinationId)) {
+            double valueAccount1 = this.withdraw(originId, value);
+            this.depositary(destinationId, valueAccount1);
         } else {
             throw new IllegalArgumentException("A conta tem que ser diferente.");
         }

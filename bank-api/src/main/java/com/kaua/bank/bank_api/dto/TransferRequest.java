@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class TransferRequest {
 
-    private Long idOrigem;
-    private Long idDestino;
+    private Long originId;
+    private Long destinationId;
     private double value;
 }
