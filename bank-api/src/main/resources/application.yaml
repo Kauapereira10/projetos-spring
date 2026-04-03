@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: banco-api
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/banco_api
+    username: kaua
+    password: 04021991
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
