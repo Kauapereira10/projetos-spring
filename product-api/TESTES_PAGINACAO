@@ -1,0 +1,86 @@
+# 📄 Testes de Paginação — Product API
+
+Testes realizados no endpoint `GET /v1/products` utilizando os recursos de paginação, ordenação e filtro do Spring Data.
+
+---
+
+## 📦 Paginação Básica
+
+### Primeira página com 5 itens
+```
+GET http://localhost:8080/v1/products?page=0&size=5
+```
+
+### Segunda página com 5 itens
+```
+GET http://localhost:8080/v1/products?page=1&size=5
+```
+
+### Página específica com apenas 2 itens
+```
+GET http://localhost:8080/v1/products?page=2&size=2
+```
+
+---
+
+## 🔃 Ordenação
+
+### Ordenar por nome (A-Z)
+```
+GET http://localhost:8080/v1/products?sort=name,asc
+```
+
+### Ordenar pelo mais caro primeiro
+```
+GET http://localhost:8080/v1/products?sort=price,desc
+```
+
+### Ordenar pela data de criação (mais antigos primeiro)
+```
+GET http://localhost:8080/v1/products?sort=createdAt,asc
+```
+
+---
+
+## 🔀 Paginação + Ordenação combinadas
+
+### Ordem alfabética na página 5 (3 itens por vez)
+```
+GET http://localhost:8080/v1/products?page=4&size=3&sort=name,asc
+```
+
+### Os 10 produtos mais baratos da primeira página
+```
+GET http://localhost:8080/v1/products?page=0&size=10&sort=price,asc
+```
+
+### Ordenação por múltiplos campos (categoria A-Z, depois preço maior primeiro)
+```
+GET http://localhost:8080/v1/products?page=0&size=10&sort=category,asc&sort=price,desc
+```
+
+---
+
+## 🔍 Filtros
+
+### Filtro por nome
+```
+GET http://localhost:8080/v1/products?name=mouse&page=0&size=10
+```
+> Busca todos os produtos cujo nome contenha "mouse", sem distinção de maiúsculas/minúsculas.
+
+### Filtro por faixa de preço
+```
+GET http://localhost:8080/v1/products?page=0&size=5&price=5000
+```
+> ⚠️ Este filtro ainda não está implementado na API. O parâmetro `price` é ignorado pelo endpoint atual.
+
+---
+
+## 📝 Observações
+
+- A paginação começa em `page=0` (primeira página)
+- O parâmetro `size` define quantos itens por página
+- O parâmetro `sort` aceita o formato `campo,direção` onde direção pode ser `asc` ou `desc`
+- É possível combinar múltiplos `sort` na mesma requisição
+- O filtro por `name` usa busca parcial, ou seja, `?name=mo` já retorna produtos com "mouse" e "monitor"
