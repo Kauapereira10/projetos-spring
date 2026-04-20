@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: product-api
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/projetos_spring?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: kaua
+    password: 04021991
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
