@@ -1,0 +1,130 @@
+# 📦 Product API
+
+API REST desenvolvida com **Java 21** e **Spring Boot** para gerenciamento de produtos, com suporte a paginação, filtro por nome e validação de dados.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+- Java 21
+- Spring Boot 3.5
+- Spring Data JPA
+- Spring Validation
+- MySQL
+- Lombok
+- Maven
+
+---
+
+## 📚 O que foi praticado
+
+- Paginação e ordenação via URL com `Pageable`
+- Filtro dinâmico por nome com `@RequestParam`
+- Padrão DTO com `ProductRequestDTO` e `ProductResponseDTO`
+- Validação de entrada com Bean Validation (`@NotBlank`, `@NotNull`, `@Positive`, `@Valid`)
+- Arquitetura em camadas (Controller → Service → Repository)
+- Enum como tipo de dado (`Category`)
+- Preenchimento automático de `createdAt` com `@PrePersist`
+
+---
+
+## 🗂️ Estrutura do Projeto
+
+```
+src/
+└── main/
+    └── java/com/kaua/product_api/
+        ├── controller/
+        │   └── ProductController.java
+        ├── service/
+        │   └── ProductService.java
+        ├── repository/
+        │   └── ProductRepository.java
+        ├── entity/
+        │   └── Product.java
+        ├── dto/
+        │   ├── ProductRequestDTO.java
+        │   └── ProductResponseDTO.java
+        └── enums/
+            └── Category.java
+```
+
+---
+
+## 🔗 Endpoints
+
+### Produtos
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/v1/products` | Lista todos os produtos (paginado) |
+| GET | `/v1/products?name=celular` | Filtra produtos por nome (paginado) |
+| GET | `/v1/products/{id}` | Busca produto por ID |
+| POST | `/v1/products` | Cria um novo produto |
+| PUT | `/v1/products/{id}` | Atualiza um produto existente |
+| DELETE | `/v1/products/{id}` | Remove um produto |
+
+---
+
+## 📄 Exemplos de Uso
+
+### Criar produto
+`POST /v1/products`
+```json
+{
+  "name": "Teclado Mecânico",
+  "price": 349.90,
+  "category": "ELECTRONICS"
+}
+```
+
+### Listar com paginação
+`GET /v1/products?page=0&size=5&sort=name,asc`
+
+### Filtrar por nome
+`GET /v1/products?name=teclado&page=0&size=5`
+
+---
+
+## 🗃️ Categorias disponíveis
+
+`ELECTRONICS`, `BOOKS`, `FOOD`, `CLOTHING`, `HOME`, `BEAUTY`, `SPORTS`, `TOYS`, `AUTOMOTIVE`
+
+---
+
+## ⚙️ Como rodar
+
+### Pré-requisitos
+- Java 21
+- MySQL
+- Maven
+
+### Configuração
+
+Crie o banco de dados no MySQL:
+```sql
+CREATE DATABASE projetos_spring;
+```
+
+Configure o arquivo `application.yml` com suas credenciais:
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/projetos_spring
+    username: SEU_USUARIO
+    password: SUA_SENHA
+```
+
+### Executar
+```bash
+mvn spring-boot:run
+```
+
+A API estará disponível em `http://localhost:8080`.
+
+---
+
+## 🔜 Próximos passos
+
+- Tratamento de exceções customizado com `@ControllerAdvice`
+- Spring Security com autenticação JWT
