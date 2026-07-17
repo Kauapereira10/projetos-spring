@@ -1,12 +1,12 @@
 package com.kaua.booking_api.entity;
 
-import com.kaua.booking_api.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -14,33 +14,30 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "service")
+public class Service {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
-    @Column(length = 150, nullable = false)
     private String name;
 
-    @Column(length = 220, nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false)
-    private String password;
+    private String description;
 
-    @Column(nullable = false, length = 13)
-    private String phone;
+    @Column(nullable = false, precision = 18, scale = 2)
+    private BigDecimal price;
 
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
+    @Column(name = "duration_minutes", nullable = false)
+    private Integer durationMinutes;
 
-    @Column(name = "created_at", nullable = false)
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "update_at")
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -53,5 +50,11 @@ public class User {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    @ManyToOne
+    @JoinColumn(name = "id_provider")
+    private User provider;
+
+
 
 }
