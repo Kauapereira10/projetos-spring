@@ -1,5 +1,6 @@
 package com.kaua.booking_api.entity;
 
+import com.kaua.booking_api.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "service")
-public class Service {
+public class EntityService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +34,8 @@ public class Service {
     @Column(name = "duration_minutes", nullable = false)
     private Integer durationMinutes;
 
+    @Column(nullable = false)
+    private Boolean active;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -44,6 +47,7 @@ public class Service {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.active = Boolean.TRUE;
     }
 
     @PreUpdate
@@ -54,7 +58,5 @@ public class Service {
     @ManyToOne
     @JoinColumn(name = "id_provider")
     private User provider;
-
-
 
 }
