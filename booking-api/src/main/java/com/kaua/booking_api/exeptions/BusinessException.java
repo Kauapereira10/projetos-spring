@@ -1,4 +1,4 @@
-package com.kaua.booking_api.dto.exeptions;
+package com.kaua.booking_api.exeptions;
 
 public class BusinessException extends Exception{
     private String message;

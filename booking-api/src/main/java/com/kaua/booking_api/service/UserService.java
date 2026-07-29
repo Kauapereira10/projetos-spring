@@ -1,13 +1,12 @@
 package com.kaua.booking_api.service;
 
-import com.kaua.booking_api.dto.exeptions.BusinessException;
+import com.kaua.booking_api.exeptions.BusinessException;
 import com.kaua.booking_api.dto.user.UserRequestDTO;
 import com.kaua.booking_api.dto.user.UserResponseDTO;
 import com.kaua.booking_api.entity.User;
 import com.kaua.booking_api.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -28,6 +27,7 @@ public class UserService {
         user.setEmail(requestDTO.email());
         user.setPassword(requestDTO.password());
         user.setPhone(requestDTO.phone());
+        user.setUserType(requestDTO.userType());
 
         User saved = repository.save(user);
         return toResponseDTO(saved);
@@ -37,16 +37,16 @@ public class UserService {
         return repository.findAll().stream().map(this::toResponseDTO).toList();
     }
 
-    private UserResponseDTO findByid(Long id) {
+    public UserResponseDTO findByid(Long id) {
         User user = repository.findById(id).get();
-        if(!repository.existsUser(user.getId())){
+        if(!repository.existsById(user.getId())){
             throw new RuntimeException("Usuário nao existe.");
         }
         return toResponseDTO(user);
     }
 
-    private UserResponseDTO updateUser(Long id, UserRequestDTO requestDTO) {
-        User user = repository.findEntityById(id);
+    public UserResponseDTO updateUser(Long id, UserRequestDTO requestDTO) {
+        User user = repository.findById(id).get();
 
         if(!user.getEmail().equals(requestDTO.email()) && repository.existsByEmail(requestDTO.email())) {
             throw new RuntimeException("Já existe um usuário cadastrado com esse email.");
@@ -61,11 +61,22 @@ public class UserService {
         return toResponseDTO(saved);
     }
 
-    public void delete(Long id) {
-        User user = repository.findEntityById(id);
-        repository.delete(user);
+    public UserResponseDTO updateUserType(Long id, UserResponseDTO responseDTO){
+        User user = repository.findById(id).get();
+        if(!repository.existsById(user.getId())){
+            throw new RuntimeException("Usuário nao existe.");
+        }
+        user.setUserType(responseDTO.userType());
+        User saved = repository.save(user);
+        return toResponseDTO(saved);
     }
 
+    public void delete(Long id) throws BusinessException {
+        User user = repository.findById(id).orElseThrow(
+                () -> new BusinessException("Usuário não encontrado com id: " + id)
+        );
+        repository.delete(user);
+    }
 
     public UserResponseDTO toResponseDTO(User user) {
         return new UserResponseDTO(

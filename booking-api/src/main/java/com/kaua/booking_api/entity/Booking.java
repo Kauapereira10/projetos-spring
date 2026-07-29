@@ -54,6 +54,7 @@ public class Booking {
     @PrePersist
     public void prePersit() {
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
         this.status = BookingStatus.PENDING;
     }
 
