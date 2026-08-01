@@ -1,12 +1,12 @@
 package com.kaua.booking_api.service;
 
+import com.kaua.booking_api.enums.UserType;
 import com.kaua.booking_api.exeptions.BusinessException;
 import com.kaua.booking_api.dto.service.ServiceRequestDTO;
 import com.kaua.booking_api.dto.service.ServiceResponseDTO;
 import com.kaua.booking_api.entity.EntityService;
 import com.kaua.booking_api.entity.User;
 import com.kaua.booking_api.repository.ServiceRepository;
-import com.kaua.booking_api.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,81 +14,93 @@ import java.util.List;
 @Service
 public class ServiceService {
 
-    private final ServiceRepository serviceRepository;
-    private final UserRepository userRepository;
+    private final ServiceRepository repository;
+    private final UserService userService;
 
-    public ServiceService(ServiceRepository serviceRepository, UserRepository userRepository) {
-        this.serviceRepository = serviceRepository;
-        this.userRepository = userRepository;
+    public ServiceService(ServiceRepository repository, UserService userService) {
+        this.repository = repository;
+        this.userService = userService;
     }
 
+    public void valideProvider(User provider) throws BusinessException {
+        if (provider.getUserType() != UserType.PROVIDER) {
+            throw new BusinessException("Somente usuários com role PROVIDER podem cadastrar serviços.");
+        }
+    }
 
     public ServiceResponseDTO create(ServiceRequestDTO requestDTO) throws BusinessException {
-        User provider = userRepository.findById(requestDTO.providerId()).orElseThrow(
-                () -> new BusinessException("Provedor não existe.")
-        );
+        User provider = userService.findEntityById(requestDTO.providerId());
+
+        valideProvider(provider);
 
         EntityService service = new EntityService();
         service.setName(requestDTO.name());
         service.setDescription(requestDTO.description());
         service.setPrice(requestDTO.price());
         service.setDurationMinutes(requestDTO.durationMinutes());
+        service.setActive(Boolean.TRUE);
         service.setProvider(provider);
 
-        EntityService saved = serviceRepository.save(service);
+        EntityService saved = repository.save(service);
 
         return toResponseDTO(saved);
 
     }
 
-    public ServiceResponseDTO update(Long id, ServiceRequestDTO requestDTO) throws BusinessException {
-        User provider = userRepository.findById(requestDTO.providerId()).orElseThrow(
-                () -> new BusinessException("Provedor não existe.")
-        );
+    public EntityService findEntityById(Long id) throws BusinessException {
+        return repository.findById(id)
+                .orElseThrow(() -> new BusinessException("Serviço não encontrado com id: " + id));
+    }
 
-        EntityService service = serviceRepository.findById(id).get();
+    public ServiceResponseDTO update(Long id, ServiceRequestDTO requestDTO) throws BusinessException {
+        User provider = userService.findEntityById(requestDTO.providerId());
+
+        valideProvider(provider);
+
+        EntityService service = findEntityById(id);
         service.setName(requestDTO.name());
         service.setDescription(requestDTO.description());
         service.setPrice(requestDTO.price());
         service.setDurationMinutes(requestDTO.durationMinutes());
-        service.setProvider(provider);
 
-        EntityService saved = serviceRepository.save(service);
+        EntityService saved = repository.save(service);
 
         return toResponseDTO(saved);
 
     }
 
     public ServiceResponseDTO updateProviderService(Long id, ServiceRequestDTO requestDTO) throws BusinessException {
-        EntityService service = serviceRepository.findById(id).orElseThrow(
-                () -> new BusinessException("Service não encontrado para atualizar o Provedor do serviço: " + id)
-        );
-        User provider = userRepository.findById(requestDTO.providerId()).orElseThrow(
-                () -> new BusinessException("Provedor não existe.")
-        );
+        EntityService service = findEntityById(id);
+        User provider = userService.findEntityById(requestDTO.providerId());
+
         service.setProvider(provider);
-        return toResponseDTO(serviceRepository.save(service));
+        return toResponseDTO(repository.save(service));
     }
 
     public void delete(Long id) throws BusinessException {
-        EntityService service = serviceRepository.findById(id).orElseThrow(
-                () -> new BusinessException("Serviço não existe.")
-        );
+        EntityService service = findEntityById(id);
 
-        serviceRepository.deleteById(id);
+        repository.deleteById(id);
+    }
 
+    public ServiceResponseDTO activate(Long id) throws BusinessException {
+        EntityService service = findEntityById(id);
+        service.setActive(true);
+
+        EntityService updated = repository.save(service);
+        return toResponseDTO(updated);
+    }
+
+    public ServiceResponseDTO deactivate(Long id) throws BusinessException {
+        EntityService service = findEntityById(id);
+        service.setActive(false);
+
+        EntityService updated = repository.save(service);
+        return toResponseDTO(updated);
     }
 
     public List<ServiceResponseDTO> findAll() {
-        return serviceRepository.findAll().stream().map(this::toResponseDTO).toList();
-    }
-
-    public ServiceResponseDTO findById(Long id) throws BusinessException {
-        EntityService service = serviceRepository.findById(id).orElseThrow(
-                () -> new BusinessException("Service não encontrado: " + id)
-        );
-
-        return toResponseDTO(service);
+        return repository.findAll().stream().map(this::toResponseDTO).toList();
     }
 
     private ServiceResponseDTO toResponseDTO(EntityService service) {
