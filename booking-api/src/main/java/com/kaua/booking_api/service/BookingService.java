@@ -7,6 +7,7 @@ import com.kaua.booking_api.entity.EntityService;
 import com.kaua.booking_api.entity.User;
 import com.kaua.booking_api.enums.UserType;
 import com.kaua.booking_api.exeptions.BusinessException;
+import com.kaua.booking_api.exeptions.ResourceNotFoundException;
 import com.kaua.booking_api.repository.BookingRepository;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,7 @@ public class BookingService {
 
     public Booking findEntityById(Long id) throws BusinessException {
         return repository.findById(id).orElseThrow(
-                () -> new BusinessException("Agendamento não encontrado: " + id)
+                () -> new ResourceNotFoundException("Agendamento não encontrado: " + id)
         );
     }
 

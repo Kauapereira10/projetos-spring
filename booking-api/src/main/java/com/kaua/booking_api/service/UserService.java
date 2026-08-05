@@ -5,6 +5,7 @@ import com.kaua.booking_api.exeptions.BusinessException;
 import com.kaua.booking_api.dto.user.UserRequestDTO;
 import com.kaua.booking_api.dto.user.UserResponseDTO;
 import com.kaua.booking_api.entity.User;
+import com.kaua.booking_api.exeptions.ResourceNotFoundException;
 import com.kaua.booking_api.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,7 @@ public class UserService {
         User user = findEntityById(id);
 
         if(!user.getEmail().equals(requestDTO.email()) && repository.existsByEmail(requestDTO.email())) {
-            throw new RuntimeException("Já existe um usuário cadastrado com esse email.");
+            throw new BusinessException("Já existe um usuário cadastrado com esse email.");
         }
 
         user.setName(requestDTO.name());
@@ -69,15 +70,13 @@ public class UserService {
     }
 
     public void delete(Long id) throws BusinessException {
-        User user = repository.findById(id).orElseThrow(
-                () -> new BusinessException("Usuário não encontrado com id: " + id)
-        );
+        User user = findEntityById(id);
         repository.delete(user);
     }
 
     public User findEntityById(Long id) throws BusinessException {
         return repository.findById(id)
-                .orElseThrow(() -> new BusinessException("Usuário não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com id: " + id));
     }
 
     public UserResponseDTO toResponseDTO(User user) {

@@ -6,6 +6,7 @@ import com.kaua.booking_api.dto.service.ServiceRequestDTO;
 import com.kaua.booking_api.dto.service.ServiceResponseDTO;
 import com.kaua.booking_api.entity.EntityService;
 import com.kaua.booking_api.entity.User;
+import com.kaua.booking_api.exeptions.ResourceNotFoundException;
 import com.kaua.booking_api.repository.ServiceRepository;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,7 @@ public class ServiceService {
 
     public EntityService findEntityById(Long id) throws BusinessException {
         return repository.findById(id)
-                .orElseThrow(() -> new BusinessException("Serviço não encontrado com id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Serviço não encontrado com id: " + id));
     }
 
     public ServiceResponseDTO update(Long id, ServiceRequestDTO requestDTO) throws BusinessException {
@@ -83,7 +84,7 @@ public class ServiceService {
         repository.deleteById(id);
     }
 
-    public ServiceResponseDTO activate(Long id) throws BusinessException {
+    private ServiceResponseDTO activate(Long id) throws BusinessException {
         EntityService service = findEntityById(id);
         service.setActive(true);
 
@@ -91,7 +92,7 @@ public class ServiceService {
         return toResponseDTO(updated);
     }
 
-    public ServiceResponseDTO deactivate(Long id) throws BusinessException {
+    private ServiceResponseDTO deactivate(Long id) throws BusinessException {
         EntityService service = findEntityById(id);
         service.setActive(false);
 
