@@ -1,5 +1,6 @@
 package com.kaua.booking_api.service;
 
+import com.kaua.booking_api.dto.user.UserResponseDTO;
 import com.kaua.booking_api.enums.UserType;
 import com.kaua.booking_api.exeptions.BusinessException;
 import com.kaua.booking_api.dto.service.ServiceRequestDTO;
@@ -46,6 +47,11 @@ public class ServiceService {
 
         return toResponseDTO(saved);
 
+    }
+
+    public ServiceResponseDTO findByid(Long id) throws BusinessException {
+        EntityService service = findEntityById(id);
+        return toResponseDTO(service);
     }
 
     public EntityService findEntityById(Long id) throws BusinessException {
